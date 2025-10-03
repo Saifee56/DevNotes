@@ -135,4 +135,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL='api.CustomUserModel'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['devnotes-2-8boz.onrender.com']
