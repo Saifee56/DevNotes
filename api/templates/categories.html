@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 16px;
+      font-size: 1.3em;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-edit {
+      background: #4CAF50;
+      color: white;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-cancel {
+      background: #999;
+      color: white;
+      width: 100%;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .category-item {
+      background: #f9f9f9;
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .category-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Category Manager</h1>
+      <p class="subtitle">Manage your blog categories</p>
+    </div>
+
+    <div id="alertContainer"></div>
+
+    <div class="card">
+      <h2 id="formTitle">Create Category</h2>
+      <form id="categoryForm">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label for="categoryName">Category Name</label>
+          <input type="text" id="categoryName" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Create</button>
+        <button type="button" class="btn btn-cancel" id="cancelBtn">Cancel</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>All Categories</h2>
+      <div id="categoriesContainer">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/category';
+    let accessToken = localStorage.getItem('access') || '';
+    let editingId = null;
+
+    function showAlert(message, type = 'success') {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      container.appendChild(alert);
+      setTimeout(() => alert.remove(), 4000);
+    }
+
+    async function fetchCategories() {
+      try {
+        const res = await fetch(`${API_BASE}/fetch-all/`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        const container = document.getElementById('categoriesContainer');
+        
+        if (data.success && data.data.length > 0) {
+          container.innerHTML = '';
+          data.data.forEach(cat => {
+            const item = document.createElement('div');
+            item.className = 'category-item';
+            item.innerHTML = `
+              <div class="category-name">${cat.name}</div>
+              <div class="category-actions">
+                <button class="btn btn-edit" onclick="editCategory(${cat.id}, '${cat.name}')">Edit</button>
+                <button class="btn btn-delete" onclick="deleteCategory(${cat.id}, '${cat.name}')">Delete</button>
+              </div>
+            `;
+            container.appendChild(item);
+          });
+        } else {
+          container.innerHTML = '<div class="empty">No categories found</div>';
+        }
+      } catch (error) {
+        showAlert('Failed to load categories', 'error');
+      }
+    }
+
+    function editCategory(id, name) {
+      editingId = id;
+      document.getElementById('categoryId').value = id;
+      document.getElementById('categoryName').value = name;
+      document.getElementById('formTitle').textContent = 'Edit Category';
+      document.getElementById('submitBtn').textContent = 'Update';
+      document.getElementById('cancelBtn').style.display = 'block';
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      document.getElementById('categoryId').value = '';
+      document.getElementById('categoryName').value = '';
+      document.getElementById('formTitle').textContent = 'Create Category';
+      document.getElementById('submitBtn').textContent = 'Create';
+      document.getElementById('cancelBtn').style.display = 'none';
+    }
+
+    async function deleteCategory(id, name) {
+      if (!confirm(`Delete "${name}"?`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/${id}/delete-category/`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          showAlert(data.message);
+          fetchCategories();
+        } else {
+          showAlert(data.message || 'Delete failed', 'error');
+        }
+      } catch (error) {
+        showAlert('Delete failed', 'error');
+      }
+    }
+
+    document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('categoryName').value;
+      
+      try {
+        const url = editingId 
+          ? `${API_BASE}/${editingId}/update-category/`
+          : `${API_BASE}/create-category/`;
+        
+        const method = editingId ? 'PATCH' : 'POST';
+        
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          showAlert(data.message);
+          document.getElementById('categoryName').value = '';
+          cancelEdit();
+          fetchCategories();
+        } else {
+          showAlert(data.message || 'Operation failed', 'error');
+        }
+      } catch (error) {
+        showAlert('Operation failed', 'error');
+      }
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
+
+    fetchCategories();
+  </script>
+</body>
+</html>
