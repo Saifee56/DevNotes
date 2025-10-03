@@ -139,3 +139,4 @@ GitHub.sublime-settings
 
 # User Files
 Media_Files/
+/staticfiles/ 

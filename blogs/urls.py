@@ -29,6 +29,7 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
+    path('',TemplateView.as_view(template_name='welcome.html')),
     path('signup/', TemplateView.as_view(template_name='signup.html')),
     path('login/', TemplateView.as_view(template_name='login.html')),
     path('blogs/', TemplateView.as_view(template_name='blogs.html')),
