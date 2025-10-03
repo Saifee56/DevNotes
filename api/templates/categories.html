@@ -193,7 +193,15 @@
   </div>
 
   <script>
-    const API_BASE = '/api/category';
+    const host = window.location.hostname;
+    let API_BASE = '';
+
+    if (host === 'localhost') {
+      API_BASE = '/api/category';
+    } else {
+      API_BASE = 'https://devnotes-2-8boz.onrender.com/api/category';
+    }
+
     let accessToken = localStorage.getItem('access') || '';
     let editingId = null;
 

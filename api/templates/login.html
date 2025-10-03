@@ -79,36 +79,50 @@
     <p>Don't have an account? <a href="/signup/">Sign Up</a></p>
   </div>
 
-  <script>
-    const form = document.getElementById('loginForm');
+<script>
+const form = document.getElementById('loginForm');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-      const data = {
-        email: form.email.value,
-        password: form.password.value
-      };
+  const data = {
+    email: form.email.value,
+    password: form.password.value
+  };
 
-      const res = await fetch('/api/auth/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      const result = await res.json();
-
-      if (result.success) {
-        // Save JWT tokens in localStorage
-        localStorage.setItem('access', result.access);
-        localStorage.setItem('refresh', result.refresh);
-        alert('Login successful!');
-        // Optionally redirect to blogs page
-        window.location.href = '/blogs/';
-      } else {
-        alert('Login failed: ' + (result.message || 'Invalid credentials'));
-      }
+  try {
+    const res = await fetch('/api/auth/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-  </script>
+
+    const result = await res.json();
+
+    if (result.success) {
+      // Save JWT tokens in localStorage
+      localStorage.setItem('access', result.access);
+      localStorage.setItem('refresh', result.refresh);
+      alert('Login successful! Redirecting to blogs feed...');
+
+      // Redirect based on environment
+      let blogsUrl = '';
+      if (window.location.hostname === 'localhost') {
+        blogsUrl = '/blogs/';
+      } else {
+        blogsUrl = 'https://devnotes-2-8boz.onrender.com/blogs/';
+      }
+
+      window.location.href = blogsUrl;
+    } else {
+      alert('Login failed: ' + (result.message || 'Invalid credentials'));
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Something went wrong. Try again.');
+  }
+});
+</script>
+
 </body>
 </html>

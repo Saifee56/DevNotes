@@ -82,29 +82,50 @@
     <p>Already have an account? <a href="/login/">Login</a></p>
   </div>
 
-  <script>
-    const form = document.getElementById('signupForm');
+<script>
+const form = document.getElementById('signupForm');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-      const data = {
-        username: form.username.value,
-        email: form.email.value,
-        first_name: form.first_name.value,
-        last_name: form.last_name.value,
-        password: form.password.value
-      };
+  const data = {
+    username: form.username.value,
+    email: form.email.value,
+    first_name: form.first_name.value,
+    last_name: form.last_name.value,
+    password: form.password.value
+  };
 
-      const res = await fetch('/api/auth/signup/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      const result = await res.json();
-      alert(JSON.stringify(result));
+  try {
+    const res = await fetch('/api/auth/signup/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-  </script>
+
+    const result = await res.json();
+
+    if(result.success) {
+      alert('Signup successful! Redirecting to login...');
+      
+      // Redirect based on environment
+      let loginUrl = '';
+      if(window.location.hostname === 'localhost') {
+        loginUrl = '/login/';
+      } else {
+        loginUrl = 'https://devnotes-2-8boz.onrender.com/login/';
+      }
+
+      window.location.href = loginUrl;
+    } else {
+      alert('Signup failed: ' + (result.message || 'Check your details'));
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Something went wrong. Try again.');
+  }
+});
+</script>
+
 </body>
 </html>

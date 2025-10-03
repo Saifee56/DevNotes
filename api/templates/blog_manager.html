@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blogs Manager</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background:#f9f9f9; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
     .container { max-width: 800px; margin: 0 auto; }
-    .card { background:white; padding:20px; border-radius:8px; margin-bottom:20px; }
-    .btn { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; }
-    .btn-primary { background:#667eea; color:white; }
-    .btn-danger { background:#f44336; color:white; }
-    .btn-edit { background:#4CAF50; color:white; }
-    input, textarea, select { width:100%; padding:8px; margin:5px 0 15px 0; border-radius:4px; border:1px solid #ccc; }
+    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .btn { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-primary { background: #667eea; color: white; }
+    .btn-danger { background: #f44336; color: white; }
+    .btn-edit { background: #4CAF50; color: white; }
+    input, textarea, select { width: 100%; padding: 8px; margin: 5px 0 15px 0; border-radius: 4px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -45,10 +45,12 @@
   </div>
 
   <script>
-    const API_BASE = '/api/blogs';
-    const CATEGORY_API = '/api/category/fetch-all/';
-    const accessToken = localStorage.getItem('access');
-    const currentUserId = parseInt(localStorage.getItem('userId'));
+    const accessToken = localStorage.getItem('access') || '';
+    const API_BASE = window.location.hostname.includes('localhost')
+      ? '/api/blogs'
+      : 'https://devnotes-2-8boz.onrender.com/api/blogs'; // Replace with your production API
+
+    const CATEGORY_API = API_BASE.replace('/blogs','/category/fetch-all/');
     let editingId = null;
 
     async function loadCategories() {
@@ -56,41 +58,41 @@
         const res = await fetch(CATEGORY_API, { headers: { 'Authorization': `Bearer ${accessToken}` } });
         const data = await res.json();
         const select = document.getElementById('categorySelect');
-        select.innerHTML = '';
-        data.data.forEach(cat => {
-          select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-        });
+        select.innerHTML = data.data.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
       } catch (err) {
-        console.error("Error loading categories:", err);
+        console.error('Error loading categories:', err);
       }
     }
 
     async function loadMyBlogs() {
       try {
-        const res = await fetch(`${API_BASE}/fetch-user-blogs/`, {
-          headers: { 'Authorization': `Bearer ${accessToken}` }
-        });
+        const res = await fetch(`${API_BASE}/fetch-user-blogs/`, { headers: { 'Authorization': `Bearer ${accessToken}` } });
         const data = await res.json();
-        console.log('Blogs fetched:', data.blogs);
         const container = document.getElementById('myBlogsContainer');
         container.innerHTML = '';
+        if (!data.blogs || data.blogs.length === 0) {
+          container.innerHTML = 'No blogs found.';
+          return;
+        }
         data.blogs.forEach(blog => {
+          const titleEscaped = blog.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+          const descEscaped = blog.description.replace(/`/g,"\\`");
           container.innerHTML += `
             <div style="border:1px solid #ddd; padding:12px; margin-bottom:10px; border-radius:6px;">
-              <h3>${blog.title}</h3>
-              <p>${blog.description}</p>
+              <h3>${titleEscaped}</h3>
+              <p>${descEscaped}</p>
               <small>Category: ${blog.category_name}</small><br>
-              <button class="btn btn-edit" onclick="editBlog(${blog.id}, '${blog.title.replace(/'/g,"\\'")}', \`${blog.description.replace(/`/g,"\\`")}\`, ${blog.category})">Edit</button>
+              <button class="btn btn-edit" onclick="editBlog(${blog.id}, '${titleEscaped}', \`${descEscaped}\`, ${blog.category})">Edit</button>
               <button class="btn btn-danger" onclick="deleteBlog(${blog.id})">Delete</button>
             </div>
           `;
         });
-        if (!container.innerHTML) container.innerHTML = "No blogs found.";
       } catch (err) {
-        console.error("Error loading blogs:", err);
-        document.getElementById('myBlogsContainer').innerHTML = "Failed to load blogs.";
+        console.error('Error loading blogs:', err);
+        document.getElementById('myBlogsContainer').innerHTML = 'Failed to load blogs.';
       }
     }
+
     async function createOrUpdateBlog(e) {
       e.preventDefault();
       const title = document.getElementById('title').value;
@@ -111,8 +113,8 @@
         cancelEdit();
         loadMyBlogs();
       } catch (err) {
-        console.error("Error creating/updating blog:", err);
-        alert("Failed to save blog.");
+        console.error('Error saving blog:', err);
+        alert('Failed to save blog.');
       }
     }
 
@@ -136,7 +138,7 @@
     }
 
     async function deleteBlog(id) {
-      if (!confirm("Delete this blog?")) return;
+      if (!confirm('Delete this blog?')) return;
       try {
         const res = await fetch(`${API_BASE}/${id}/delete-blog/`, {
           method: 'DELETE',
@@ -146,8 +148,8 @@
         alert(data.message);
         loadMyBlogs();
       } catch (err) {
-        console.error("Error deleting blog:", err);
-        alert("Failed to delete blog.");
+        console.error('Error deleting blog:', err);
+        alert('Failed to delete blog.');
       }
     }
 

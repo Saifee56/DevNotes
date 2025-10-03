@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blogs Feed</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,30 +13,11 @@
       padding: 20px;
       color: #333;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      color: white;
-      margin-bottom: 40px;
-      animation: fadeInDown 0.6s ease;
-    }
-
-    .header h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .header p {
-      opacity: 0.9;
-      font-size: 1.1em;
-    }
-
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; color: white; margin-bottom: 40px; animation: fadeInDown 0.6s ease; }
+    .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .header p { opacity: 0.9; font-size: 1.1em; }
+    .header a { color: white; margin: 0 10px; text-decoration: underline; }
     .blog-card {
       background: white;
       border-radius: 20px;
@@ -50,122 +26,25 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       animation: fadeInUp 0.6s ease;
     }
-
-    .blog-card h3 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-
-    .blog-card p {
-      font-size: 1em;
-      line-height: 1.5;
-      margin-bottom: 15px;
-    }
-
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9em;
-      color: #666;
-      margin-bottom: 15px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.9em;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .btn-like {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .btn-like:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .comments {
-      margin-top: 15px;
-    }
-
-    .comment {
-      font-size: 0.9em;
-      margin-bottom: 8px;
-      padding-left: 10px;
-      border-left: 2px solid #667eea;
-      color: #444;
-    }
-
-    .comment input {
-      width: 80%;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-right: 6px;
-    }
-
-    .comment button {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-
-    .comment button:hover {
-      background: #45a049;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: white;
-    }
-
-    .spinner {
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid white;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
+    .blog-card h3 { font-size: 1.5em; margin-bottom: 10px; }
+    .blog-card p { font-size: 1em; line-height: 1.5; margin-bottom: 15px; }
+    .meta { display: flex; justify-content: space-between; font-size: 0.9em; color: #666; margin-bottom: 15px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 10px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-like { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .btn-like:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+    .comments { margin-top: 15px; }
+    .comment { font-size: 0.9em; margin-bottom: 8px; padding-left: 10px; border-left: 2px solid #667eea; color: #444; }
+    .comment input { width: 80%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-right: 6px; }
+    .comment button { padding: 8px 12px; border-radius: 8px; border: none; background: #4CAF50; color: white; cursor: pointer; }
+    .comment button:hover { background: #45a049; }
+    .loading { text-align: center; padding: 40px; color: white; }
+    .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     @media (max-width: 768px) {
-      .meta {
-        flex-direction: column;
-        gap: 5px;
-      }
-
-      .comment input {
-        width: 70%;
-      }
+      .meta { flex-direction: column; gap: 5px; }
+      .comment input { width: 70%; }
     }
   </style>
 </head>
@@ -174,9 +53,8 @@
     <div class="header">
       <h1>📰 Blogs Feed</h1>
       <p>Stay updated with the latest posts</p>
-      <a href="{% url 'blog_manager' %}">✍️ Write Blogs</a>
-      <a href="{% url 'categories' %}">📂 Manage Categories</a>
-
+      <a href="/blog-manager/">✍️ Write Blogs</a>
+      <a href="/categories/">📂 Manage Categories</a>
     </div>
 
     <div id="blogsContainer">
@@ -188,23 +66,35 @@
   </div>
 
   <script>
-    const accessToken = localStorage.getItem('access'); // or your token key
-    
+    const accessToken = localStorage.getItem('access') || '';
+
+    // Dynamic API base
+    const host = window.location.hostname;
+    const API_BASE = host.includes('localhost') 
+      ? '/api/blogs'
+      : 'https://devnotes-2-8boz.onrender.com/api/blogs'; // Replace with prod URL
+
     async function fetchBlogs() {
       try {
-        const res = await fetch('/api/blogs/fetch-blogs/', {
+        const res = await fetch(`${API_BASE}/fetch-blogs/`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         const data = await res.json();
-        displayBlogs(data.blogs);
+        displayBlogs(data.blogs || []);
       } catch (err) {
         console.error(err);
+        document.getElementById('blogsContainer').innerHTML = '<p class="loading">Failed to load blogs.</p>';
       }
     }
 
     function displayBlogs(blogs) {
       const container = document.getElementById('blogsContainer');
       container.innerHTML = '';
+
+      if(blogs.length === 0){
+        container.innerHTML = '<p class="loading">No blogs found.</p>';
+        return;
+      }
 
       blogs.forEach(blog => {
         const blogDiv = document.createElement('div');
@@ -218,7 +108,6 @@
             <span>Likes: <span id="likes-${blog.id}">${blog.total_likes}</span></span>
           </div>
           <button class="btn btn-like" onclick="likeBlog(${blog.id})">👍 Like/Unlike</button>
-
           <div class="comments">
             <h4>Comments:</h4>
             <div id="comment-list-${blog.id}">
@@ -234,7 +123,7 @@
 
     async function likeBlog(blogId) {
       try {
-        const res = await fetch(`/api/blogs/${blogId}/like-blog/`, {
+        const res = await fetch(`${API_BASE}/${blogId}/like-blog/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
@@ -253,13 +142,13 @@
       if(!content) return;
 
       try {
-        const res = await fetch(`/api/blogs/${blogId}/comment/`, {
-          method: 'PATCH',
+        const res = await fetch(`${API_BASE}/${blogId}/comment/`, {
+          method: 'POST', // Correct method for adding new comment
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ content,blogs: blogId  })
+          body: JSON.stringify({ content })
         });
         const data = await res.json();
         if(data.success){
