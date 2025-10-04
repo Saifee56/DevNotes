@@ -97,13 +97,10 @@ WSGI_APPLICATION = "blogs.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgres://postgres:1234@localhost:5432/devnotes',
-        conn_max_age=600
-    )
-}
+if ENVIRONMENT == "production":
+    ALLOWED_HOSTS = ['devnotes-2-8boz.onrender.com']  # Remove https://
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
