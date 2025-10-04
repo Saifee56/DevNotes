@@ -33,10 +33,23 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 if ENVIRONMENT == "production":
-    ALLOWED_HOSTS = ['https://devnotes-2-8boz.onrender.com']
-
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600
+        )
+    }
 else:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'devnotes',
+            'USER': 'postgres',
+            'PASSWORD': '1234',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 
 # Application definition
@@ -153,3 +166,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL='api.CustomUserModel'
 
 
+ALLOWED_HOSTS=[
+    'https://devnotes-2-8boz.onrender.com/',
+    'localhost',
+    'http://127.0.0.1:8000/'
+]
