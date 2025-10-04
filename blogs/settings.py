@@ -50,7 +50,11 @@ else:
             'PORT': '5432',
         }
     }
-
+if ENVIRONMENT == "production":
+    ALLOWED_HOSTS = ['devnotes-2-8boz.onrender.com']
+    CSRF_TRUSTED_ORIGINS = ['https://devnotes-2-8boz.onrender.com']
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -166,8 +170,3 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL='api.CustomUserModel'
 
 
-ALLOWED_HOSTS=[
-    'https://devnotes-2-8boz.onrender.com/',
-    'localhost',
-    'http://127.0.0.1:8000/'
-]
