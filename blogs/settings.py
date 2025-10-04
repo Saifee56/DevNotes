@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "corsheaders",
 
     # installed apps
     "api",
@@ -74,6 +75,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -115,9 +117,19 @@ WSGI_APPLICATION = "blogs.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 if ENVIRONMENT == "production":
-    ALLOWED_HOSTS = ['devnotes-2-8boz.onrender.com']  # Remove https://
+    CORS_ALLOWED_ORIGINS = [
+        "https://devnotes-2-8boz.onrender.com",
+    ]
+    CSRF_TRUSTED_ORIGINS = ['https://devnotes-2-8boz.onrender.com']
+    ALLOWED_HOSTS = ['devnotes-2-8boz.onrender.com']
 else:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

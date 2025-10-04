@@ -136,30 +136,51 @@
       }
     }
 
-    async function addComment(blogId) {
-      const input = document.getElementById(`comment-input-${blogId}`);
-      const content = input.value.trim();
-      if(!content) return;
+  async function addComment(blogId) {
+    const input = document.getElementById(`comment-input-${blogId}`);
+    const content = input.value.trim();
+    if(!content) return;
 
-      try {
-        const res = await fetch(`${API_BASE}/${blogId}/comment/`, {
-          method: 'POST', // Correct method for adding new comment
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ content })
-        });
-        const data = await res.json();
-        if(data.success){
-          const list = document.getElementById(`comment-list-${blogId}`);
-          list.innerHTML += `<div class="comment"><b>${data.comment.user}:</b> ${data.comment.content}</div>`;
-          input.value = '';
+    // Get CSRF token from cookie
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
         }
-      } catch(err) {
-        console.error(err);
       }
+      return cookieValue;
     }
+
+    try {
+      const res = await fetch(`${API_BASE}/${blogId}/comment/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')  // Add CSRF token
+        },
+        credentials: 'include',  // Include cookies
+        body: JSON.stringify({ content })
+      });
+      const data = await res.json();
+      if(data.success){
+        const list = document.getElementById(`comment-list-${blogId}`);
+        list.innerHTML += `<div class="comment"><b>${data.comment.user}:</b> ${data.comment.content}</div>`;
+        input.value = '';
+      } else {
+        alert('Failed to add comment: ' + (data.message || 'Unknown error'));
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Error adding comment. Check console.');
+    }
+  }
 
     fetchBlogs();
   </script>
