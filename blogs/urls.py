@@ -34,5 +34,5 @@ urlpatterns = [
     path('login/', TemplateView.as_view(template_name='login.html')),
     path('blogs/', TemplateView.as_view(template_name='blogs.html')),
     path('categories/',TemplateView.as_view(template_name='categories.html'),name="categories"),
-    path('my-blog/',TemplateView.as_view(template_name='blog_manager.html'),name="blog_manager")
+    path('my-blog/',TemplateView.as_view(template_name='blog_manager.html'),name="blog-manager")
 ]
